@@ -1,20 +1,23 @@
-
 import { useEffect, useState } from "react";
-import { getNews } from "./services/newsService";
+import { getNews, type NewsArticle } from "./services/newsService";
 import "./App.css";
 
 function App() {
-    const [news, setNews] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [news, setNews] = useState<NewsArticle[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>("");
 
     useEffect(() => {
         async function fetchNews() {
             try {
                 const data = await getNews();
                 setNews(data);
-            } catch (err) {
-                setError(err.message);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("An unexpected error occurred");
+                }
             } finally {
                 setLoading(false);
             }
